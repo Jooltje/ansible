@@ -1,0 +1,4 @@
+---
+- include: /ansible/playbook/ntp.yml
+- include: /ansible/playbook/webserver.yml
+- include: /ansible/playbook/loadbalancer.yml

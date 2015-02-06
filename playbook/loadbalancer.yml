@@ -1,0 +1,17 @@
+---
+- hosts: loadbalancer
+  sudo: yes
+  tasks:
+  - name: install appache
+    apt: name=apache2 state=latest
+  - name: install mod jk
+    apt: name=libapache2-mod-jk state=latest
+#  - name: configure tomcat7 server
+#    template: src=/ansible/template/webserver/server.xml.j2 dest=/etc/tomcat7/server.xml owner=root group=tomcat7 mode=0644
+#    notify:
+#    - restart tomcat7
+  - name: service appache started
+    service: name=apache2 state=started
+  handlers:
+  - name: restart tomcat7
+    service: name=tomcat7 state=restarted

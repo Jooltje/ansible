@@ -1,0 +1,25 @@
+---
+- hosts: webserver
+  sudo: yes
+  tasks:
+  - name: install tomcat7
+    apt: name=tomcat7 state=latest
+  - name: install tomcat7 admin
+    apt: name=tomcat7-admin state=latest
+  - name: configure tomcat7 server
+    template: src=/ansible/template/webserver/server.xml.j2 dest=/etc/tomcat7/server.xml owner=root group=tomcat7 mode=0644
+    notify:
+    - restart tomcat7
+  - name: configure tomcat7 users
+    template: src=/ansible/template/webserver/tomcat-users.j2 dest=/etc/tomcat7/tomcat-users.xml owner=root group=tomcat7 mode=0644
+    notify:
+    - restart tomcat7
+  - name: deploy probe
+    copy: src=/ansible/template/webserver/probe.war.j2 dest=/var/lib/tomcat7/webapps/probe.war owner=root group=tomcat7 mode=0644
+    notify:
+    - restart tomcat7
+  - name: run tomcat7 service
+    service: name=tomcat7 state=started
+  handlers:
+  - name: restart tomcat7
+    service: name=tomcat7 state=restarted
