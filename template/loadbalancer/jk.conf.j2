@@ -71,14 +71,14 @@
         JkMount jk-status
         Order deny,allow
         Deny from all
-        Allow from 127.0.0.1
+        Allow from 192.168.56.150
     </Location>
     <Location /jk-manager>
         # Inside Location we can omit the URL in JkMount
         JkMount jk-manager
         Order deny,allow
         Deny from all
-        Allow from 127.0.0.1
+        Allow from 192.168.56.150
     </Location>
 
     # If you want to put all mounts into an external file
