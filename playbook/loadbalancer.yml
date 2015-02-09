@@ -7,9 +7,11 @@
   - name: install mod jk
     apt: name=libapache2-mod-jk state=latest
   - name: configure mod jk
-    setup: webserver
-    template: src=/ansible/template/webserver/workers.properties.j2 dest=/etc/libapache2-mod-jk/workers.properties
-    template: src=/ansible/template/webserver/server.xml.j2 dest=/etc/tomcat7/server.xml owner=root group=tomcat7 mode=0644
+    template: src=/ansible/template/loadbalancer/jk.conf.j2 dest=/etc/apache2/mods-available/jk.conf owner=root group=root mode=0644
+    notify:
+    - restart apache
+  - name: configure workers
+    template: src=/ansible/template/loadbalancer/workers.properties.j2 dest=/etc/libapache2-mod-jk/workers.properties owner=root group=root mode=0644
     notify:
     - restart apache
   - name: service appache started
