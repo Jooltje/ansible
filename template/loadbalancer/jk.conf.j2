@@ -66,14 +66,14 @@
     # or copy it logically there by including "JkMountCopy On"
     # in the virtual host.
     # Add an appropriate authentication method here!
-    <Location /jk-status>
+    <Location /status>
         # Inside Location we can omit the URL in JkMount
         JkMount jk-status
         Order deny,allow
         Deny from all
         Allow from 192.168.56.1
     </Location>
-    <Location /jk-manager>
+    <Location /manager>
         # Inside Location we can omit the URL in JkMount
         JkMount jk-manager
         Order deny,allow
