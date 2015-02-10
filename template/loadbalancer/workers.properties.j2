@@ -1,22 +1,28 @@
-#setup node1
-worker.node1.port=8009
-worker.node1.host=192.168.56.152
-worker.node1.type=ajp13
-worker.node1.lbfactor=50
+worker.list=loadbalancer, status
 
-#setup node2
-worker.node2.port=8009
-worker.node2.host=192.168.56.153
-worker.node2.type=ajp13
-worker.node2.lbfactor=100
+#setup yellow
+worker.yellow.port=8009
+worker.yellow.host=192.168.56.30
+worker.yellow.type=ajp13
+worker.yellow.lbfactor=1
+
+#setup red
+worker.red.port=8009
+worker.red.host=192.168.56.31
+worker.red.type=ajp13
+worker.red.lbfactor=1
+
+#setup blue
+worker.blue.port=8009
+worker.blue.host=192.168.56.32
+worker.blue.type=ajp13
+worker.blue.lbfactor=1
 
 #setup the load-balancer
-worker.list=loadbalancer
 worker.loadbalancer.type=lb
-worker.loadbalancer.balance_workers=node1,node2
+worker.loadbalancer.balance_workers=yellow, red, blue
 worker.loadbalancer.sticky_session=True
 
 # Status worker for managing load balancer
-worker.list=status
 worker.status.type=status
 
