@@ -1,0 +1,11 @@
+[loadbalancer]
+sun
+moon
+
+[webserver]
+blue
+red
+yellow
+
+[toolbox]
+toolbox

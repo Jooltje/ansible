@@ -1,0 +1,22 @@
+---
+- name: install ntp
+  apt: name=ntp state=installed
+  sudo: yes
+  tags: ntp
+
+- name: configure ntp
+  template: src=ntp.conf.j2 dest=/etc/ntp.conf owner=root group=root mode=0644
+  notify:
+    - restart ntp
+  sudo: yes
+  tags: ntp
+
+- name: start service ntp
+  service: name=ntp state=started
+  sudo: yes
+  tags: ntp
+
+- name: install htop
+  apt: name=htop state=installed
+  sudo: yes
+  tags: htop
