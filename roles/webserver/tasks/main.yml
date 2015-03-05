@@ -25,6 +25,12 @@
   - restart tomcat7
   sudo: yes
 
+- name: deploy clusterjsp
+  copy: src=clusterjsp.war dest=/var/lib/tomcat7/webapps/clusterjsp.war owner=root group=tomcat7 mode=0644
+  notify:
+  - restart tomcat7
+  sudo: yes 
+
 - name: run tomcat7 service
   service: name=tomcat7 state=started
   sudo: yes
