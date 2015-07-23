@@ -1,3 +1,4 @@
 ---
+- include: router.yml
 - include: webserver.yml
 - include: loadbalancer.yml
