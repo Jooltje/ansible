@@ -2,9 +2,11 @@
 # file: roles/gateway/tasks/main.yml
 
 - name: install gateway script
+  su: yes
   copy: src=00-firewall dest=/etc/network/if-up.d/00-firewall owner=root group=root mode=0700
 
 - name: execute gateway script
+  su: yes
   command: sh /etc/network/if-up.d/00-firewall
 
 
