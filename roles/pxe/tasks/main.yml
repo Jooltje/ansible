@@ -1,0 +1,28 @@
+---
+# file: roles/pxe/tasks/main.yml
+
+- name: install dnsmasq
+  su: yes
+  apt: name=dnsmasq state=present
+
+- name: install debian image
+  su: yes
+  unarchive: src=netboot.tar.gz copy=yes dest=/var/ftpd
+
+- name: configure dnsmasq
+  su: yes
+  copy: src= dest= owner= group= mode=
+  notify:
+    - restart dnsmasq
+
+- name: run dnsmasq
+  su: yes
+  service: name=dnsmasq state=running enabled=yes
+  
+- name: install lighttpd
+  su: yes
+  apt: name=lighttpd state=present
+
+
+- name: install preseed
+  copy: src=preseed.txt dest=/bleeeeh

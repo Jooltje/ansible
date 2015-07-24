@@ -1,19 +1,23 @@
 ---
-- name: install ntp
-  apt: name=ntp state=installed
+- name: update apt-get
   su: yes
+  apt: update_cache=yes
+
+- name: install ntp
+  su: yes
+  apt: name=ntp state=installed
   tags: ntp
 
 - name: configure ntp
-  template: src=ntp.conf.j2 dest=/etc/ntp.conf owner=root group=root mode=0644
   su: yes
+  template: src=ntp.conf.j2 dest=/etc/ntp.conf owner=root group=root mode=0644
   notify:
     - restart ntp
   tags: ntp
 
 - name: start service ntp
-  service: name=ntp state=started
   su: yes
+  service: name=ntp state=started
   tags: ntp
 
 - name: install htop
