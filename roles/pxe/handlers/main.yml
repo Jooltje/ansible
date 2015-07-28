@@ -1,0 +1,8 @@
+---
+- name: restart dnsmasq
+  su: yes
+  service: name=dnsmasq state=restarted
+
+- name: restart nginx
+  su: yes
+  service: name=nginx state=restarted

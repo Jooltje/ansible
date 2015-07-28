@@ -11,7 +11,7 @@
 
 - name: configure dnsmasq
   su: yes
-  copy: src= dest= owner= group= mode=
+  copy: src=dnsmasq.conf dest=/etc/dnsmasq.conf owner=root group=root mode=544
   notify:
     - restart dnsmasq
 
@@ -19,10 +19,14 @@
   su: yes
   service: name=dnsmasq state=running enabled=yes
   
-- name: install lighttpd
+- name: install nginx 
   su: yes
-  apt: name=lighttpd state=present
+  apt: name=nginx-light  state=present
 
+- name: run nginx
+  su: yes
+  service: name=nginx state=running enabled=yes
 
 - name: install preseed
-  copy: src=preseed.txt dest=/bleeeeh
+  su: yes
+  copy: src=preseed.txt dest=/var/www/html/preseed.txt owner=root group=root mode=544

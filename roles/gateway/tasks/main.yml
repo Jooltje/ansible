@@ -3,10 +3,7 @@
 
 - name: install gateway script
   su: yes
-  copy: src=00-firewall dest=/etc/network/if-up.d/00-firewall owner=root group=root mode=0700
-
-- name: execute gateway script
-  su: yes
-  command: sh /etc/network/if-up.d/00-firewall
-
+  template: src=00-firewall.j2 dest=/etc/network/if-up.d/00-firewall owner=root group=root mode=0700
+  notify:
+    - execute gateway script
 

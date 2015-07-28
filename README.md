@@ -4,7 +4,7 @@ find . -type d -exec chmod 755 {} +
 find . -type f -exec chmod 644 {} +
 ```
 ##Ansible
-``
+```
 ansible-playbook --ask-su-pass -i stage site.yml
 ```
 
