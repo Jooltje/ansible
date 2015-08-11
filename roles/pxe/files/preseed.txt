@@ -317,14 +317,14 @@ d-i partman/confirm_nooverwrite boolean true
 
 
 ### Package selection
-#tasksel tasksel/first multiselect standard, web-server, kde-desktop
+tasksel tasksel/first multiselect
 
 # Individual additional packages to install
 #d-i pkgsel/include string openssh-server build-essential
-#d-i pkgsel/include string openssh-server
+d-i pkgsel/include string openssh-server
 # Whether to upgrade packages after debootstrap.
 # Allowed values: none, safe-upgrade, full-upgrade
-#d-i pkgsel/upgrade select none
+d-i pkgsel/upgrade select none
 
 
 # Some versions of the installer can report back on what software you have
@@ -382,7 +382,7 @@ d-i grub-installer/bootdev  string /dev/sda
 #d-i finish-install/keep-consoles boolean true
 
 # Avoid that last message about the install being complete.
-#d-i finish-install/reboot_in_progress note
+d-i finish-install/reboot_in_progress note
 
 # This will prevent the installer from ejecting the CD during the reboot,
 # which is useful in some situations.

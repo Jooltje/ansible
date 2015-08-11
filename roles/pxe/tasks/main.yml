@@ -1,6 +1,10 @@
 ---
 # file: roles/pxe/tasks/main.yml
 
+- name: configure hosts
+  su: yes
+  copy: src=hosts dest=/etc/hosts owner=root group=root mode=644
+
 - name: install dnsmasq
   su: yes
   apt: name=dnsmasq state=present
