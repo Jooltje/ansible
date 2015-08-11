@@ -9,9 +9,13 @@
   su: yes
   unarchive: src=netboot.tar.gz copy=yes dest=/var/ftpd
 
+- name: configure preseed url
+  su: yes
+  copy: src=txt.cfg dest=/var/ftpd/debian-installer/amd64/boot-screens/txt.cfg owner=root group=root mode=644
+
 - name: configure dnsmasq
   su: yes
-  copy: src=dnsmasq.conf dest=/etc/dnsmasq.conf owner=root group=root mode=544
+  copy: src=dnsmasq.conf dest=/etc/dnsmasq.conf owner=root group=root mode=644
   notify:
     - restart dnsmasq
 
@@ -29,4 +33,4 @@
 
 - name: install preseed
   su: yes
-  copy: src=preseed.txt dest=/var/www/html/preseed.txt owner=root group=root mode=544
+  copy: src=preseed.txt dest=/var/www/html/preseed.txt owner=root group=root mode=644
