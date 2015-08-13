@@ -1,8 +1,8 @@
 ---
 - name: restart dnsmasq
-  su: yes
+  sudo: yes
   service: name=dnsmasq state=restarted
 
 - name: restart nginx
-  su: yes
+  sudo: yes
   service: name=nginx state=restarted

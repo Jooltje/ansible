@@ -15,17 +15,17 @@ iptables -A INPUT -i lo -j ACCEPT
 
 # Allow established connections, and those not coming from the outside
 iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
-iptables -A INPUT -m state --state NEW -i ! {{ ansible_interfaces[2] }} -j ACCEPT
-iptables -A FORWARD -i {{ ansible_interfaces[2] }} -o {{ ansible_interfaces[1] }} -m state --state ESTABLISHED,RELATED -j ACCEPT
+iptables -A INPUT -m state --state NEW -i !{{ ansible_interfaces[1] }} -j ACCEPT
+iptables -A FORWARD -i {{ ansible_interfaces[1] }} -o {{ ansible_interfaces[2] }} -m state --state ESTABLISHED,RELATED -j ACCEPT
 
 # Allow outgoing connections from the LAN side.
-iptables -A FORWARD -i {{ ansible_interfaces[1] }} -o {{ ansible_interfaces[2] }} -j ACCEPT
+iptables -A FORWARD -i {{ ansible_interfaces[2] }} -o {{ ansible_interfaces[1] }} -j ACCEPT
 
 # Masquerade.
-iptables -t nat -A POSTROUTING -o {{ ansible_interfaces[2] }} -j MASQUERADE
+iptables -t nat -A POSTROUTING -o {{ ansible_interfaces[1] }} -j MASQUERADE
 
 # Don't forward from the outside to the inside.
-iptables -A FORWARD -i {{ ansible_interfaces[2] }} -o {{ ansible_interfaces[2] }} -j REJECT
+iptables -A FORWARD -i {{ ansible_interfaces[1] }} -o {{ ansible_interfaces[1] }} -j REJECT
 
 # Enable routing.
 echo 1 > /proc/sys/net/ipv4/ip_forward

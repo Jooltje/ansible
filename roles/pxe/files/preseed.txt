@@ -1,3 +1,4 @@
+
 #### Contents of the preconfiguration file (for jessie)
 ### Localization
 # Preseeding only locale sets language, country and locale.
@@ -321,7 +322,7 @@ tasksel tasksel/first multiselect
 
 # Individual additional packages to install
 #d-i pkgsel/include string openssh-server build-essential
-d-i pkgsel/include string openssh-server
+d-i pkgsel/include string openssh-server python
 # Whether to upgrade packages after debootstrap.
 # Allowed values: none, safe-upgrade, full-upgrade
 d-i pkgsel/upgrade select none

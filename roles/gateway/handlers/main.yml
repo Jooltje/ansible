@@ -1,4 +1,4 @@
 ---
 - name: execute gateway script
-  su: yes
+  sudo: yes
   command: sh /etc/network/if-up.d/00-firewall

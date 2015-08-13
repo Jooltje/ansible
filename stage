@@ -1,2 +1,8 @@
 [router]
-gateway
+G1.network.lan
+
+[reserve]
+T1.network.lan
+T2.network.lan
+T3.network.lan
+T4.network.lan

@@ -1,0 +1,4 @@
+---
+- hosts: reserve
+  roles:
+    - common

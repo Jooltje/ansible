@@ -1,40 +1,48 @@
 ---
 # file: roles/pxe/tasks/main.yml
 
+- name: install resolvconf
+  sudo: yes
+  apt: name=resolvconf state=present
+
 - name: configure hosts
-  su: yes
+  sudo: yes
   copy: src=hosts dest=/etc/hosts owner=root group=root mode=644
 
 - name: install dnsmasq
-  su: yes
+  sudo: yes
   apt: name=dnsmasq state=present
 
+- name: create ftpd directory
+  sudo: yes
+  file: path=/var/ftpd state=directory mode=0755
+
 - name: install debian image
-  su: yes
+  sudo: yes
   unarchive: src=netboot.tar.gz copy=yes dest=/var/ftpd
 
 - name: configure preseed url
-  su: yes
+  sudo: yes
   copy: src=txt.cfg dest=/var/ftpd/debian-installer/amd64/boot-screens/txt.cfg owner=root group=root mode=644
 
 - name: configure dnsmasq
-  su: yes
+  sudo: yes
   copy: src=dnsmasq.conf dest=/etc/dnsmasq.conf owner=root group=root mode=644
   notify:
     - restart dnsmasq
 
 - name: run dnsmasq
-  su: yes
+  sudo: yes
   service: name=dnsmasq state=running enabled=yes
   
 - name: install nginx 
-  su: yes
+  sudo: yes
   apt: name=nginx-light  state=present
 
 - name: run nginx
-  su: yes
+  sudo: yes
   service: name=nginx state=running enabled=yes
 
 - name: install preseed
-  su: yes
+  sudo: yes
   copy: src=preseed.txt dest=/var/www/html/preseed.txt owner=root group=root mode=644

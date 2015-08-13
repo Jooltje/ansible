@@ -2,7 +2,7 @@
 # file: roles/gateway/tasks/main.yml
 
 - name: install gateway script
-  su: yes
+  sudo: yes
   template: src=00-firewall.j2 dest=/etc/network/if-up.d/00-firewall owner=root group=root mode=0700
   notify:
     - execute gateway script
