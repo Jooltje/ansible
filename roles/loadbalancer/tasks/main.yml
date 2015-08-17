@@ -1,24 +1,14 @@
 ---
-- name: install apache
-  apt: name=apache2 state=latest
+- name: install haproxy
+  apt: name=haproxy
   sudo: yes
 
-- name: install mod jk
-  apt: name=libapache2-mod-jk state=latest
-  sudo: yes
-
-- name: configure mod jk
-  template: src=jk.conf.j2 dest=/etc/apache2/mods-available/jk.conf owner=root group=root mode=0644
+- name: configure haproxy
+  copy: src=haproxy.cfg dest=/etc/haproxy/haproxy.cfg owner=root group=root mode=0644
   sudo: yes
   notify:
-    - restart apache
+    - restart haproxy
 
-- name: configure workers
-  template: src=workers.properties.j2 dest=/etc/libapache2-mod-jk/workers.properties owner=root group=root mode=0644
-  sudo: yes  
-  notify:
-    - restart apache
-
-- name: service appache started
-  service: name=apache2 state=started
+- name: run haproxy
+  service: name=haproxy state=started
   sudo: yes

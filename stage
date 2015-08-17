@@ -1,7 +1,10 @@
 [router]
 G1.network.lan
 
-[reserve]
+[loadbalancer]
+B1.network.lan
+
+[webserver]
 T1.network.lan
 T2.network.lan
 T3.network.lan

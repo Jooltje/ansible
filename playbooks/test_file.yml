@@ -1,0 +1,13 @@
+- hosts: router
+  tasks:
+  - name: create ftpd directory
+    sudo: yes
+    file: path=/var/ftpd state=directory mode=0755 owner=root group=root recurse=no
+
+#  - name: install debian image
+#    sudo: yes
+#    unarchive: src=netboot.tar.gz copy=yes dest=/var/ftpd
+
+#  - name: configure preseed url
+#    sudo: yes
+#    copy: src=txt.cfg dest=/var/ftpd/debian-installer/amd64/boot-screens/txt.cfg owner=root group=root mode=644

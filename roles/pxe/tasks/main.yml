@@ -15,7 +15,7 @@
 
 - name: create ftpd directory
   sudo: yes
-  file: path=/var/ftpd state=directory mode=0755
+  file: path=/var/ftpd state=directory mode=0755 owner=root group=root recurse=no
 
 - name: install debian image
   sudo: yes

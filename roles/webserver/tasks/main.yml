@@ -1,36 +1,41 @@
 ---
-- name: install tomcat7
-  apt: name=tomcat7 state=latest
+- name: install java
+  apt: name=default-jdk
   sudo: yes
 
-- name: install tomcat7 admin
-  apt: name=tomcat7-admin state=latest
+- name: install tomcat
+  apt: name=tomcat8
   sudo: yes
 
-- name: configure tomcat7 server
-  template: src=server.xml.j2 dest=/etc/tomcat7/server.xml owner=root group=tomcat7 mode=0644
-  notify:
-  - restart tomcat7
-  sudo: yes
+#- name: install admin
+#  apt: name=tomcat8-admin
+#  sudo: yes
 
-- name: configure tomcat7 users
-  template: src=tomcat-users.xml.j2 dest=/etc/tomcat7/tomcat-users.xml owner=root group=tomcat7 mode=0644
-  notify:
-  - restart tomcat7
-  sudo: yes
+#- name: configure tomcat7 server
+#  template: src=server.xml.j2 dest=/etc/tomcat7/server.xml owner=root group=tomcat7 mode=0644
+#  notify:
+#  - restart tomcat7
+#  sudo: yes
 
-- name: deploy probe
-  copy: src=probe.war dest=/var/lib/tomcat7/webapps/probe.war owner=root group=tomcat7 mode=0644
-  notify:
-  - restart tomcat7
-  sudo: yes
+#- name: configure tomcat7 users
+#  template: src=tomcat-users.xml.j2 dest=/etc/tomcat7/tomcat-users.xml owner=root group=tomcat7 mode=0644
+#  notify:
+#  - restart tomcat7
+#  sudo: yes
+
+#- name: deploy probe
+#  copy: src=probe.war dest=/var/lib/tomcat7/webapps/probe.war owner=root group=tomcat7 mode=0644
+#  notify:
+#  - restart tomcat7
+#  sudo: yes
 
 - name: deploy clusterjsp
-  copy: src=clusterjsp.war dest=/var/lib/tomcat7/webapps/clusterjsp.war owner=root group=tomcat7 mode=0644
-  notify:
-  - restart tomcat7
-  sudo: yes 
+  copy: src=clusterjsp.war dest=/var/lib/tomcat8/webapps/clusterjsp.war owner=root group=tomcat8 mode=0644
+  sudo: yes
+#  notify:
+#  - restart tomcat8
+#  sudo: yes 
 
-- name: run tomcat7 service
-  service: name=tomcat7 state=started
+- name: run tomcat8 service
+  service: name=tomcat8 state=started
   sudo: yes
