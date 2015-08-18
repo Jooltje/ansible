@@ -3,6 +3,7 @@ G1.network.lan
 
 [loadbalancer]
 B1.network.lan
+B2.network.lan
 
 [webserver]
 T1.network.lan
