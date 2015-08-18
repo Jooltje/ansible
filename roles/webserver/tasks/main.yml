@@ -11,6 +11,12 @@
   apt: name=tomcat8-admin
   sudo: yes
 
+- name: update hosts
+  copy: src=hosts dest=/etc/hosts owner=root group=root mode=0644
+  notify:
+  -  restart tomcat8
+  sudo: yes
+
 - name: configure tomcat
   copy: src=server.xml dest=/etc/tomcat8/server.xml owner=root group=tomcat8 mode=0644
   notify:
