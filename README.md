@@ -70,5 +70,9 @@ sudo ndbmtd
 ```
 ###Sql
 ```
+sudo /usr/local/mysql/bin/mysql
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'password';
+FLUSH PRIVILEGES;
+
 sudo /usr/local/mysql/bin/mysqld --user=mysql &
 ```
