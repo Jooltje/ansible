@@ -57,3 +57,18 @@ echo 1 > /proc/sys/net/ipv4/ip_forward
 
 source: 
 * https://www.debian-administration.org/article/23/Setting_up_a_simple_Debian_gateway
+
+##Mysql Cluster
+###Management
+```
+sudo ndb_mgmd --initial --configdir=/var/lib/mysql-cluster -f /var/lib/mysql-cluster/config.ini
+ndb_mgm -e shutdown
+```
+###Data
+```
+sudo ndbmtd
+```
+###Sql
+```
+sudo /usr/local/mysql/bin/mysqld --user=mysql &
+```
