@@ -1,0 +1,24 @@
+---
+- hosts: data_node
+  tasks:
+  - name: update hosts   
+    copy: src=cluster/hosts dest=/etc/hosts owner=root group=root mode=644
+    sudo: yes
+  - name: download mysql cluster
+    get_url: url=http://dev.mysql.com/get/Downloads/MySQL-Cluster-7.4/mysql-cluster-gpl-7.4.7-linux-glibc2.5-x86_64.tar.gz dest=/var/tmp/cluster.tar.gz mode=440    
+    sudo: yes
+  - name: create temporary cluster directory
+    file: path=/var/tmp/cluster state=directory mode=0755
+    sudo: yes
+  - name: unpack mysql cluster
+    command: sudo tar xzfv /var/tmp/cluster.tar.gz -C /var/tmp/cluster --strip-components=1
+    sudo: yes
+  - name: copy ndbd
+    command: cp /var/tmp/cluster/bin/ndbd /usr/local/bin/ndbd
+    sudo: yes
+  - name: copy ndbmtd
+    command: cp /var/tmp/cluster/bin/ndbmtd /usr/local/bin/ndbmtd
+    sudo: yes
+  - name: update my.cnf
+    copy: src=cluster/my.cnf dest=/etc/my.cnf owner=root group=root mode=644
+    sudo: yes

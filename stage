@@ -10,3 +10,14 @@ T1.network.lan
 T2.network.lan
 T3.network.lan
 T4.network.lan
+
+[management_node]
+MN.network.lan
+
+[data_node]
+DN1.network.lan
+DN2.network.lan
+
+[sql_node]
+SN1.network.lan
+SN2.network.lan

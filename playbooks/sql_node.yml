@@ -1,0 +1,50 @@
+---
+- hosts: sql_node
+  tasks:
+  - name: update hosts
+    copy: src=cluster/hosts dest=/etc/hosts owner=root group=root mode=644
+    sudo: yes
+  - name: apt-get update
+    apt: update_cache=yes
+    sudo: yes
+  - name: install libaio1
+    apt: name=libaio1 state=present
+    sudo: yes
+  - name: install libfile-copy-recursive-perl
+    apt: name=libfile-copy-recursive-perl state=present
+    sudo: yes
+  - name: download mysql cluster
+    get_url: url=http://dev.mysql.com/get/Downloads/MySQL-Cluster-7.4/mysql-cluster-gpl-7.4.7-linux-glibc2.5-x86_64.tar.gz dest=/var/tmp/cluster.tar.gz mode=440
+    sudo: yes
+  - name: add mysql group
+    group: name=mysql system=yes state=present
+    sudo: yes
+  - name: add mysql user
+    user: name=mysql group=mysql system=yes state=present
+    sudo: yes
+  - name: create mysql  directory
+    command: mkdir -p /usr/local/cluster
+    sudo: yes
+  - name: unpack mysql cluster
+    command: tar xzfv /var/tmp/cluster.tar.gz -C /usr/local/cluster --strip-components=1
+    sudo: yes
+  - name: create symbolic mysql link
+    command: ln -s /usr/local/cluster /usr/local/mysql
+    sudo: yes
+  - name: install mysql database 
+    command: /usr/local/mysql/scripts/mysql_install_db --user=mysql --basedir=/usr/local/mysql --datadir=/usr/local/mysql/data --no-defaults
+    sudo: yes
+  - name: apply user root permissions 
+    command: chown -R root /usr/local/mysql
+    sudo: yes
+  - name: apply user mysql permissions
+    command: chown -R mysql /usr/local/mysql/data
+    sudo: yes
+  - name: apply group mysql permissions
+    command: chgrp -R mysql /usr/local/mysql
+    sudo: yes
+  - name: copy configuration
+    copy: src=cluster/my.cnf dest=/etc/my.cnf owner=root group=root mode=644
+    sudo: yes
+
+

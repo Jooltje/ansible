@@ -1,0 +1,4 @@
+---
+- include: sql_node.yml 
+- include: data_node.yml 
+- include: management_node.yml 
