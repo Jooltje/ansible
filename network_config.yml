@@ -10,27 +10,6 @@
     - vars/main.yml
   
   tasks:
-    - name: Install required packages
-      apt:
-        name:
-          - vlan
-          - ifupdown
-          - iproute2
-        state: present
-        update_cache: yes
-      
-    - name: Enable VLAN module
-      modprobe:
-        name: 8021q
-        state: present
-    
-    - name: Ensure VLAN module loads on boot
-      lineinfile:
-        path: /etc/modules
-        line: 8021q
-        state: present
-        create: yes
-        
     - name: Configure network interfaces
       template:
         src: templates/network_interfaces.j2

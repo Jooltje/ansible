@@ -9,32 +9,18 @@ iface lo inet loopback
 auto {{ interface }}
 iface {{ interface }} inet manual
     # No IP on the main interface
-    up ip link set $IFACE up
-    down ip link set $IFACE down
 
 # WAN interface (VLAN 10)
 auto {{ interface }}.{{ wan.vlan }}
 iface {{ interface }}.{{ wan.vlan }} inet static
-    address {{ wan.ip }}
+    address {{ wan.address }}
     netmask {{ wan.netmask }}
     gateway {{ wan.gateway }}
-    vlan-raw-device {{ interface }}
-{% for route in additional_routes %}
-{% if route.vlan == "wan" %}
-    post-up ip route add {{ route.network }}/{{ route.cidr }} via {{ route.gateway }}
-    pre-down ip route del {{ route.network }}/{{ route.cidr }} via {{ route.gateway }}
-{% endif %}
-{% endfor %}
+    # Google DNS servers
+    dns-nameservers 8.8.8.8 8.8.4.4
 
 # LAN interface (VLAN 20) 
 auto {{ interface }}.{{ lan.vlan }}
 iface {{ interface }}.{{ lan.vlan }} inet static
-    address {{ lan.ip }}
+    address {{ lan.address }}
     netmask {{ lan.netmask }}
-    vlan-raw-device {{ interface }}
-{% for route in additional_routes %}
-{% if route.vlan == "lan" %}
-    post-up ip route add {{ route.network }}/{{ route.cidr }} via {{ route.gateway }}
-    pre-down ip route del {{ route.network }}/{{ route.cidr }} via {{ route.gateway }}
-{% endif %}
-{% endfor %}
