@@ -1,0 +1,23 @@
+---
+# Network configuration variables
+
+# Main interface to use
+interface: "{{ ansible_default_ipv4.interface | default('eth0') }}"
+
+# WAN settings (VLAN 10)
+wan:
+  vlan: 10
+  ip: "192.168.10.2"
+  netmask: "255.255.255.0"
+  gateway: "192.168.10.1"
+
+# LAN settings (VLAN 20)
+lan:
+  vlan: 20
+  ip: "192.168.20.1"
+  netmask: "255.255.255.0"
+
+# Additional routes (optional)
+# Example: additional_routes:
+#            - { network: "192.168.30.0", cidr: "24", gateway: "192.168.10.254", vlan: "wan" }
+additional_routes: []
