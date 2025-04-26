@@ -19,7 +19,7 @@ iface {{ interface }}.{{ wan.vlan }} inet static
     # Google DNS servers
     dns-nameservers 8.8.8.8 8.8.4.4
 
-# LAN interface (VLAN 20) 
+# LAN interface (VLAN 20)
 auto {{ interface }}.{{ lan.vlan }}
 iface {{ interface }}.{{ lan.vlan }} inet static
     address {{ lan.address }}

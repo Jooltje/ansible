@@ -5,10 +5,10 @@
   hosts: localhost
   connection: local
   become: true
-  
+
   vars_files:
     - vars/main.yml
-  
+
   tasks:
     - name: Configure network interfaces
       template:
