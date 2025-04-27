@@ -81,6 +81,26 @@
     mode: 0644
   when: pxe.enabled | default(false)
 
+- name: Create GRUB modules directory
+  file:
+    path: "{{ pxe.tftp_root }}/grub/x86_64-efi"
+    state: directory
+    mode: 0755
+  when: pxe.enabled | default(false)
+
+- name: Copy GRUB module listings
+  copy:
+    src: "/usr/lib/grub/x86_64-efi/{{ item }}"
+    dest: "{{ pxe.tftp_root }}/grub/x86_64-efi/{{ item }}"
+    remote_src: yes
+  with_items:
+    - command.lst
+    - fs.lst
+    - crypto.lst
+    - terminal.lst
+  ignore_errors: yes
+  when: pxe.enabled | default(false)
+
 - name: Download Debian installer files
   get_url:
     url: "{{ item.url }}"
