@@ -11,9 +11,15 @@ wan:
   netmask: "255.255.255.0"
   gateway: "192.168.0.1"
 
-# LAN settings (VLAN 20)
-lan:
+# LAN1 settings (VLAN 20)
+lan1:
   vlan: 20
-  address: "172.16.0.1"
+  address: "192.168.20.1"
+  netmask: "255.255.255.0"
+
+# LAN2 settings (VLAN 30)
+lan2:
+  vlan: 30
+  address: "192.168.30.1"
   netmask: "255.255.255.0"
 
