@@ -14,6 +14,19 @@ interface={{ interface }}.{{ lan2.vlan }}
 # Also listen on loopback for local DNS resolution
 interface=lo
 
+{% if pxe.enabled | default(false) %}
+# Enable TFTP server
+enable-tftp
+tftp-root={{ pxe.tftp_root }}
+
+# UEFI PXE Boot configuration
+# Match UEFI clients by architecture option
+dhcp-match=set:efi64,option:client-arch,7
+dhcp-match=set:efi64,option:client-arch,9
+# Set boot filename for UEFI clients
+dhcp-boot=tag:efi64,EFI/BOOT/BOOTX64.EFI
+{% endif %}
+
 {% if lan1.dhcp_enabled | default(false) %}
 # DHCP configuration for LAN1
 dhcp-range={{ lan1.dhcp_start }},{{ lan1.dhcp_end }},{{ lan1.netmask }},{{ dhcp.lease_time }}

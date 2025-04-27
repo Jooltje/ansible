@@ -36,3 +36,14 @@ lan2:
   dhcp_start: "192.168.30.100"
   dhcp_end: "192.168.30.200"
 
+# PXE boot configuration
+pxe:
+  enabled: true
+  tftp_root: "/srv/tftp"
+  debian:
+    enabled: true
+    version: "bookworm"
+    arch: "amd64"
+    kernel_url: "http://ftp.debian.org/debian/dists/bookworm/main/installer-amd64/current/images/netboot/debian-installer/amd64/linux"
+    initrd_url: "http://ftp.debian.org/debian/dists/bookworm/main/installer-amd64/current/images/netboot/debian-installer/amd64/initrd.gz"
+
