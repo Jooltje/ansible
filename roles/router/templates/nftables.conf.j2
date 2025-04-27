@@ -29,16 +29,16 @@ table inet filter {
         
         # Allow SSH
         tcp dport 22 accept
-        
-        # Allow DHCP requests
-        udp dport {67, 68} accept
+    
+        # Allow DHCP requests ONLY from LAN interfaces
+        iifname { "{{ interface }}.{{ lan1.vlan }}", "{{ interface }}.{{ lan2.vlan }}" } udp dport 67 accept
 
-        # Allow TFTP requests
-        udp dport 69 accept
-        
-        # Allow DNS requests
-        udp dport 53 accept
-        tcp dport 53 accept
+        # Allow TFTP requests ONLY from LAN interfaces
+        iifname { "{{ interface }}.{{ lan1.vlan }}", "{{ interface }}.{{ lan2.vlan }}" } udp dport 69 accept
+    
+        # Allow DNS requests ONLY from LAN interfaces
+        iifname { "{{ interface }}.{{ lan1.vlan }}", "{{ interface }}.{{ lan2.vlan }}" } udp dport 53 accept
+        iifname { "{{ interface }}.{{ lan1.vlan }}", "{{ interface }}.{{ lan2.vlan }}" } tcp dport 53 accept
     }
 
     chain forward {
