@@ -1,0 +1,6 @@
+---
+- name: Configure router with VLANs
+  hosts: routers
+  become: true
+  roles:
+    - router

@@ -1,26 +1,9 @@
 ---
-# network_config.yml - Ansible playbook for configuring network with VLANs in pull mode
-
-- name: Configure network with VLANs
-  hosts: localhost
-  connection: local
-  become: true
-
-  vars_files:
-    - vars/main.yml
-
-  tasks:
-    - name: Configure network interfaces
-      template:
-        src: templates/network_interfaces.j2
-        dest: /etc/network/interfaces
-        owner: root
-        group: root
-        mode: 0644
-      notify: restart networking
-
-  handlers:
-    - name: restart networking
-      service:
-        name: networking
-        state: restarted
+- name: Configure network interfaces
+  template:
+    src: interfaces.j2
+    dest: /etc/network/interfaces
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart networking
