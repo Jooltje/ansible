@@ -1,6 +1,8 @@
 # Global settings
 log-queries
 log-dhcp
+# Enable more verbose logging including TFTP
+log-debug
 
 # Bind only to specified interfaces, not all
 bind-interfaces
@@ -27,20 +29,16 @@ dhcp-match=set:efi64,option:client-arch,9
 dhcp-boot=tag:efi64,EFI/BOOT/BOOTX64.EFI
 {% endif %}
 
-# Tag requests based on the interface they arrive on
-dhcp-match=set:lan1,{{ interface }}.{{ lan1.vlan }}
-dhcp-match=set:lan2,{{ interface }}.{{ lan2.vlan }}
-
 {% if lan1.dhcp_enabled | default(false) %}
 # DHCP configuration for LAN1
-dhcp-range=tag:lan1,{{ lan1.dhcp_start }},{{ lan1.dhcp_end }},{{ lan1.netmask }},{{ dhcp.lease_time }}
-dhcp-option=tag:lan1,option:router,{{ lan1.address }}
-dhcp-option=tag:lan1,option:dns-server,{{ dhcp.dns_servers | join(',') }}
+dhcp-range={{ interface }}.{{ lan1.vlan }},{{ lan1.dhcp_start }},{{ lan1.dhcp_end }},{{ lan1.netmask }},{{ dhcp.lease_time }}
+dhcp-option={{ interface }}.{{ lan1.vlan }},option:router,{{ lan1.address }}
+dhcp-option={{ interface }}.{{ lan1.vlan }},option:dns-server,{{ dhcp.dns_servers | join(',') }}
 {% endif %}
 
 {% if lan2.dhcp_enabled | default(false) %}
 # DHCP configuration for LAN2
-dhcp-range=tag:lan2,{{ lan2.dhcp_start }},{{ lan2.dhcp_end }},{{ lan2.netmask }},{{ dhcp.lease_time }}
-dhcp-option=tag:lan2,option:router,{{ lan2.address }}
-dhcp-option=tag:lan2,option:dns-server,{{ dhcp.dns_servers | join(',') }}
+dhcp-range={{ interface }}.{{ lan2.vlan }},{{ lan2.dhcp_start }},{{ lan2.dhcp_end }},{{ lan2.netmask }},{{ dhcp.lease_time }}
+dhcp-option={{ interface }}.{{ lan2.vlan }},option:router,{{ lan2.address }}
+dhcp-option={{ interface }}.{{ lan2.vlan }},option:dns-server,{{ dhcp.dns_servers | join(',') }}
 {% endif %}
