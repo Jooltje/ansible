@@ -8,13 +8,14 @@ bind-interfaces
 # Don't use /etc/resolv.conf
 no-resolv
 
-# Explicitly disable DHCP on WAN and other interfaces
-no-dhcp-interface={{ interface }}
-no-dhcp-interface={{ interface }}.{{ wan.vlan }}
+# Listen ONLY on these interfaces (this restricts both DNS and DHCP)
+interface={{ interface }}.{{ lan1.vlan }}
+interface={{ interface }}.{{ lan2.vlan }}
+# Also listen on loopback for local DNS resolution
+interface=lo
 
 {% if lan1.dhcp_enabled | default(false) %}
 # DHCP configuration for LAN1
-interface={{ interface }}.{{ lan1.vlan }}
 dhcp-range={{ lan1.dhcp_start }},{{ lan1.dhcp_end }},{{ lan1.netmask }},{{ dhcp.lease_time }}
 dhcp-option=option:router,{{ lan1.address }}
 dhcp-option=option:dns-server,{{ dhcp.dns_servers | join(',') }}
@@ -22,7 +23,6 @@ dhcp-option=option:dns-server,{{ dhcp.dns_servers | join(',') }}
 
 {% if lan2.dhcp_enabled | default(false) %}
 # DHCP configuration for LAN2
-interface={{ interface }}.{{ lan2.vlan }}
 dhcp-range={{ lan2.dhcp_start }},{{ lan2.dhcp_end }},{{ lan2.netmask }},{{ dhcp.lease_time }}
 dhcp-option=option:router,{{ lan2.address }}
 dhcp-option=option:dns-server,{{ dhcp.dns_servers | join(',') }}
