@@ -3,6 +3,15 @@ no-resolv
 log-queries
 log-dhcp
 
+# Bind only to specified interfaces, not all
+bind-interfaces
+
+# Don't use /etc/resolv.conf
+no-resolv
+
+# Explicitly don't serve DHCP on WAN
+except-interface={{ interface }}.{{ wan.vlan }}
+
 {% if lan1.dhcp_enabled | default(false) %}
 # DHCP configuration for LAN1
 interface={{ interface }}.{{ lan1.vlan }}
