@@ -98,7 +98,6 @@
     - fs.lst
     - crypto.lst
     - terminal.lst
-  ignore_errors: yes
   when: pxe.enabled | default(false)
 
 - name: Download Debian installer files
