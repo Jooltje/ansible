@@ -109,3 +109,17 @@
     - { url: "{{ pxe.debian.kernel_url }}", dest: "{{ pxe.tftp_root }}/debian/vmlinuz" }
     - { url: "{{ pxe.debian.initrd_url }}", dest: "{{ pxe.tftp_root }}/debian/initrd.gz" }
   when: pxe.enabled | default(false) and pxe.debian.enabled | default(false)
+
+- name: Create preseed directory
+  file:
+    path: "{{ pxe.tftp_root }}/debian/preseed"
+    state: directory
+    mode: 0755
+  when: pxe.enabled | default(false) and pxe.debian.enabled | default(false)
+
+- name: Copy preseed file for automated installation
+  template:
+    src: preseed.cfg.j2
+    dest: "{{ pxe.tftp_root }}/debian/preseed/preseed.cfg"
+    mode: 0644
+  when: pxe.enabled | default(false) and pxe.debian.enabled | default(false)

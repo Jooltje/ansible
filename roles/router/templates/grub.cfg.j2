@@ -11,4 +11,9 @@ menuentry "Install Debian {{ pxe.debian.version }} ({{ pxe.debian.arch }})" {
     linux /debian/vmlinuz vga=788 --- quiet
     initrd /debian/initrd.gz
 }
+
+menuentry "Install Debian {{ pxe.debian.version }} ({{ pxe.debian.arch }}) - Preseed" {
+    linux /debian/vmlinuz vga=788 auto=true priority=high url=tftp://{{ lan1.address }}/debian/preseed/preseed.cfg --- quiet
+    initrd /debian/initrd.gz
+}
 {% endif %}
