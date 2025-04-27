@@ -67,6 +67,13 @@
     - { src: "/usr/lib/grub/x86_64-efi-signed/grubnetx64.efi.signed", dest: "{{ pxe.tftp_root }}/EFI/BOOT/grubx64.efi" }
   when: pxe.enabled | default(false)
 
+- name: Copy GRUB EFI bootloader to TFTP root
+  copy:
+    src: "/usr/lib/grub/x86_64-efi-signed/grubnetx64.efi.signed"
+    dest: "{{ pxe.tftp_root }}/grubx64.efi"
+    remote_src: yes
+  when: pxe.enabled | default(false)
+
 - name: Create GRUB configuration
   template:
     src: grub.cfg.j2
