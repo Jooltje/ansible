@@ -1,0 +1,20 @@
+# Global settings
+no-resolv
+log-queries
+log-dhcp
+
+{% if lan1.dhcp_enabled | default(false) %}
+# DHCP configuration for LAN1
+interface={{ interface }}.{{ lan1.vlan }}
+dhcp-range={{ lan1.dhcp_start }},{{ lan1.dhcp_end }},{{ lan1.netmask }},{{ dhcp.lease_time }}
+dhcp-option=tag:{{ interface }}.{{ lan1.vlan }},option:router,{{ lan1.address }}
+dhcp-option=tag:{{ interface }}.{{ lan1.vlan }},option:dns-server,{{ dhcp.dns_servers | join(',') }}
+{% endif %}
+
+{% if lan2.dhcp_enabled | default(false) %}
+# DHCP configuration for LAN2
+interface={{ interface }}.{{ lan2.vlan }}
+dhcp-range={{ lan2.dhcp_start }},{{ lan2.dhcp_end }},{{ lan2.netmask }},{{ dhcp.lease_time }}
+dhcp-option=tag:{{ interface }}.{{ lan2.vlan }},option:router,{{ lan2.address }}
+dhcp-option=tag:{{ interface }}.{{ lan2.vlan }},option:dns-server,{{ dhcp.dns_servers | join(',') }}
+{% endif %}
