@@ -1,8 +1,8 @@
 ---
 # Network configuration variables
 
-# Main interface to use
-interface: "{{ ansible_default_ipv4.interface | default('eth0') }}"
+# Main interface to use - fixed to prevent detection issues after first run
+interface: "enp3s0"
 
 # WAN settings (VLAN 10)
 wan:
