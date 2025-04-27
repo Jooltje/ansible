@@ -1,3 +1,8 @@
 # Debian Preseed Configuration - Minimal Version
 # Only setting the first question: language to English
 d-i debian-installer/language string en
+
+# TODO: Consider permanently blacklisting problematic WiFi modules on the installed system
+# Uncomment and adjust as needed:
+# d-i preseed/late_command string \
+#     echo "blacklist iwlwifi" > /target/etc/modprobe.d/blacklist-wifi.conf

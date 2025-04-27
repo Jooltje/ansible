@@ -8,12 +8,12 @@ menuentry "Boot from local disk" {
 
 {% if pxe.debian.enabled | default(false) %}
 menuentry "Install Debian {{ pxe.debian.version }} ({{ pxe.debian.arch }})" {
-    linux /debian/vmlinuz vga=788 --- quiet
+    linux /debian/vmlinuz vga=788 modprobe.blacklist=iwlwifi --- quiet
     initrd /debian/initrd.gz
 }
 
 menuentry "Install Debian {{ pxe.debian.version }} ({{ pxe.debian.arch }}) - Preseed" {
-    linux /debian/vmlinuz vga=788 auto=true priority=high url=tftp://{{ lan1.address }}/debian/preseed/preseed.cfg --- quiet
+    linux /debian/vmlinuz vga=788 auto=true priority=high url=tftp://{{ lan1.address }}/debian/preseed/preseed.cfg modprobe.blacklist=iwlwifi --- quiet
     initrd /debian/initrd.gz
 }
 {% endif %}
