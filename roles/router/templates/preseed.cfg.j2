@@ -10,6 +10,10 @@ d-i keyboard-configuration/xkb-keymap select be
 #d-i netcfg/choose_interface select auto
 d-i netcfg/choose_interface select enp1s0
 
+# Set hostname and domain from all.yml values
+d-i netcfg/get_hostname string {{ pxe.hostname }}
+d-i netcfg/get_domain string {{ pxe.domain }}
+
 # TODO: Consider permanently blacklisting problematic WiFi modules on the installed system
 # Uncomment and adjust as needed:
 # d-i preseed/late_command string \
