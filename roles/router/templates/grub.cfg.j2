@@ -13,7 +13,7 @@ menuentry "Install Debian {{ pxe.debian.version }} ({{ pxe.debian.arch }})" {
 }
 
 menuentry "Install Debian {{ pxe.debian.version }} ({{ pxe.debian.arch }}) - Preseed" {
-    linux /debian/vmlinuz vga=788 auto=true priority=high url=tftp://{{ lan1.address }}/debian/preseed/preseed.cfg modprobe.blacklist=iwlwifi --- quiet
+    linux /debian/vmlinuz vga=788 auto=true priority=critical url=tftp://{{ lan1.address }}/debian/preseed/preseed.cfg netcfg/choose_interface=auto modprobe.blacklist=iwlwifi --- quiet
     initrd /debian/initrd.gz
 }
 {% endif %}
