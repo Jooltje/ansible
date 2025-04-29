@@ -25,7 +25,7 @@ interface=lo
 {% if pxe.enabled | default(false) %}
 # Enable TFTP server
 enable-tftp
-tftp-root={{ pxe.tftp_root }}
+tftp-root={{ pxe.tftp }}
 
 # UEFI PXE Boot configuration
 # Match UEFI clients by architecture option
