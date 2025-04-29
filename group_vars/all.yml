@@ -39,7 +39,9 @@ lan2:
 # PXE boot configuration
 pxe:
   enabled: true
-  tftp_root: "/srv/tftp"
+  tftp: "/srv/tftp"
+  domain: "network.lan"
+  hostname: "zotax"
   debian:
     enabled: true
     version: "bookworm"

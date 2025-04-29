@@ -14,7 +14,7 @@ MAC=$(echo "$2" | tr '[:upper:]' '[:lower:]')
 # Create MD5 hash and take first 8 characters
 HASH=$(echo "$MAC" | md5sum | cut -c1-8)
 # Generate hostname
-HOSTNAME="{{ pxe.hostname_prefix | default('debian') }}-${HASH}"
+HOSTNAME="{{ pxe.hostname | default('debian') }}-${HASH}"
 
 # Create hosts database file if it doesn't exist
 HOSTS_DHCP="/etc/dhcp-hosts.db"
