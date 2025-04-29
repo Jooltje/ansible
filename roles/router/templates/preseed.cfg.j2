@@ -5,8 +5,10 @@ d-i debian-installer/country string BE
 d-i debian-installer/locale string en_US.UTF-8
 d-i keyboard-configuration/xkb-keymap select be
 
-# Network configuration - use the interface that worked for PXE boot
-d-i netcfg/choose_interface select auto
+# Network configuration - hardcode enp1s0 as the default interface
+# Keep original option as reference
+#d-i netcfg/choose_interface select auto
+d-i netcfg/choose_interface select enp1s0
 
 # TODO: Consider permanently blacklisting problematic WiFi modules on the installed system
 # Uncomment and adjust as needed:
