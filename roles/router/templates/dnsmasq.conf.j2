@@ -10,6 +10,12 @@ bind-interfaces
 # Don't use /etc/resolv.conf
 no-resolv
 
+# Domain configuration for all DHCP clients
+domain={{ pxe.domain | default('local') }}
+
+# Use script to generate hostnames based on MAC addresses
+dhcp-script=/usr/local/sbin/dhcp-hostname.sh
+
 # Listen ONLY on these interfaces (this restricts both DNS and DHCP)
 interface={{ interface }}.{{ lan1.vlan }}
 interface={{ interface }}.{{ lan2.vlan }}

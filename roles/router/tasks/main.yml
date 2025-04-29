@@ -149,3 +149,35 @@
     name: nftables
     enabled: yes
     state: started
+    
+# DHCP hostname generation setup
+- name: Backup original hosts file
+  copy:
+    src: /etc/hosts
+    dest: /etc/hosts.original
+    remote_src: yes
+    force: no  # Only copy if destination doesn't exist
+
+- name: Create empty DHCP hosts database
+  file:
+    path: /etc/dhcp-hosts.db
+    state: touch
+    owner: root
+    group: root
+    mode: 0644
+  
+- name: Deploy DHCP hostname script
+  template:
+    src: dhcp-hostname.sh.j2
+    dest: /usr/local/sbin/dhcp-hostname.sh
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Create log file for hostname script
+  file:
+    path: /var/log/dhcp-hostname.log
+    state: touch
+    owner: root
+    group: root
+    mode: 0644

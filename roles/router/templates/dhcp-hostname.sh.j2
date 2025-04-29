@@ -1,0 +1,36 @@
+#!/bin/bash
+# Generate hostname based on MAC address using hash function
+# Called by dnsmasq with: $1=add|old $2=MAC $3=IP $4=HOSTNAME
+
+# Enable logging
+exec 1>> /var/log/dhcp-hostname.log 2>&1
+echo "$(date): Called with args: $@"
+
+# Exit if missing required parameters
+[ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ] && { echo "Missing parameters!"; exit 1; }
+
+# Generate hash from MAC address (lowercase for consistency)
+MAC=$(echo "$2" | tr '[:upper:]' '[:lower:]')
+# Create MD5 hash and take first 8 characters
+HASH=$(echo "$MAC" | md5sum | cut -c1-8)
+# Generate hostname
+HOSTNAME="{{ pxe.hostname_prefix | default('debian') }}-${HASH}"
+
+# Create hosts database file if it doesn't exist
+HOSTS_DHCP="/etc/dhcp-hosts.db"
+touch "$HOSTS_DHCP"
+
+# Remove any previous entries for this MAC address
+grep -v "^$MAC " "$HOSTS_DHCP" > "$HOSTS_DHCP.tmp"
+# Add current MAC to hostname mapping
+echo "$MAC $3 $HOSTNAME.{{ pxe.domain | default('local') }} $HOSTNAME" >> "$HOSTS_DHCP.tmp"
+mv "$HOSTS_DHCP.tmp" "$HOSTS_DHCP"
+
+# Generate hosts file entries from our database
+cat /etc/hosts.original > /etc/hosts
+while read MAC_ENTRY IP FQDN HOST; do
+    echo "$IP $FQDN $HOST" >> /etc/hosts
+done < "$HOSTS_DHCP"
+
+echo "$(date): Assigned $HOSTNAME to $MAC ($3)"
+exit 0
