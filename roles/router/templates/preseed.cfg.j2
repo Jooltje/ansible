@@ -18,3 +18,13 @@ d-i netcfg/get_domain string {{ pxe.domain }}
 # Uncomment and adjust as needed:
 # d-i preseed/late_command string \
 #     echo "blacklist iwlwifi" > /target/etc/modprobe.d/blacklist-wifi.conf
+
+# Disable root account
+d-i passwd/root-login boolean false
+
+# Create a regular user with sudo access
+d-i passwd/user-fullname string {{ pxe.user }}
+d-i passwd/username string {{ pxe.user }}
+
+# Use encrypted password
+d-i passwd/user-password-crypted string {{ pxe.password }}

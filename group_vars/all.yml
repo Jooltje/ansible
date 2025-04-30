@@ -42,6 +42,8 @@ pxe:
   tftp: "/srv/tftp"
   domain: "network.lan"
   hostname: "zotax"
+  user: "ansible"
+  password: "$6$7zH3OQ0eEXgIbZf4$OrwK6MsaC5phsrb7cpwrpIWerbpeAfBu31dWkbDUAIzfcm2VjOxeYw057okEsDGgvp4YRGDsDim5nHPzV2MOW."
   debian:
     enabled: true
     version: "bookworm"
