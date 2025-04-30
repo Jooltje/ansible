@@ -6,6 +6,12 @@
 exec 1>> /var/log/dhcp-hostname.log 2>&1
 echo "$(date): Called with args: $@"
 
+# Only process DHCP events (add/old), ignore TFTP events
+if [[ "$1" != "add" && "$1" != "old" ]]; then
+    echo "$(date): Ignoring non-DHCP event: $1"
+    exit 0
+fi
+
 # Exit if missing required parameters
 [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ] && { echo "Missing parameters!"; exit 1; }
 
