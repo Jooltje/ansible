@@ -168,14 +168,6 @@
     owner: dnsmasq
     group: dnsmasq
     mode: 0664
-
-- name: Create empty DHCP hosts database
-  file:
-    path: /etc/dhcp-hosts.db
-    state: touch
-    owner: root
-    group: root
-    mode: 0644
   
 - name: Deploy DHCP hostname script
   template:
