@@ -168,6 +168,15 @@
     remote_src: yes
     force: no  # Only copy if destination doesn't exist
 
+- name: Create empty ethers file with proper permissions
+  file:
+    path: /etc/ethers
+    state: touch
+    owner: dnsmasq
+    group: dnsmasq
+    mode: 0664
+  ignore_errors: true
+
 - name: Create empty DHCP hosts database
   file:
     path: /etc/dhcp-hosts.db
