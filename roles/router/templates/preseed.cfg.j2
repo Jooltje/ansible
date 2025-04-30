@@ -59,13 +59,13 @@ d-i finish-install/reboot_in_progress note
 
 # Install SSH authorized keys for the ansible user and configure sudo access
 d-i preseed/late_command string \
-    mkdir -p /target/home/{{ pxe.user }}/.ssh && \
-    echo "{{ lookup('file', '/home/{{ pxe.user }}/.ssh/id_ed25519.pub') | trim }}" > /target/home/{{ pxe.user }}/.ssh/authorized_keys && \
-    chmod 700 /target/home/{{ pxe.user }}/.ssh && \
-    chmod 600 /target/home/{{ pxe.user }}/.ssh/authorized_keys && \
-    chown -R {{ pxe.user }}:{{ pxe.user }} /target/home/{{ pxe.user }}/.ssh && \
-    echo '{{ pxe.user }} ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/ansible && \
-    chmod 440 /target/etc/sudoers.d/ansible && \
-    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/' /target/etc/ssh/sshd_config && \
-    sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/' /target/etc/ssh/sshd_config && \
-    sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /target/etc/ssh/sshd_config
+    in-target mkdir -p /home/{{ pxe.user }}/.ssh && \
+    in-target bash -c "echo '{{ lookup('file', '/home/{{ pxe.user }}/.ssh/id_ed25519.pub') | trim }}' > /home/{{ pxe.user }}/.ssh/authorized_keys" && \
+    in-target chmod 700 /home/{{ pxe.user }}/.ssh && \
+    in-target chmod 600 /home/{{ pxe.user }}/.ssh/authorized_keys && \
+    in-target chown -R {{ pxe.user }}:{{ pxe.user }} /home/{{ pxe.user }}/.ssh && \
+    in-target bash -c "echo '{{ pxe.user }} ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/ansible" && \
+    in-target chmod 440 /etc/sudoers.d/ansible && \
+    in-target sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config && \
+    in-target sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/' /etc/ssh/sshd_config && \
+    in-target sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
