@@ -56,3 +56,16 @@ popularity-contest popularity-contest/participate boolean false
 
 # Skip the installation complete message
 d-i finish-install/reboot_in_progress note
+
+# Install SSH authorized keys for the ansible user and configure sudo access
+d-i preseed/late_command string \
+    mkdir -p /target/home/{{ pxe.user }}/.ssh && \
+    echo "{{ ansible_ssh_public_key }}" > /target/home/{{ pxe.user }}/.ssh/authorized_keys && \
+    chmod 700 /target/home/{{ pxe.user }}/.ssh && \
+    chmod 600 /target/home/{{ pxe.user }}/.ssh/authorized_keys && \
+    chown -R {{ pxe.user }}:{{ pxe.user }} /target/home/{{ pxe.user }}/.ssh && \
+    echo '{{ pxe.user }} ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/ansible && \
+    chmod 440 /target/etc/sudoers.d/ansible && \
+    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/' /target/etc/ssh/sshd_config && \
+    sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/' /target/etc/ssh/sshd_config && \
+    sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /target/etc/ssh/sshd_config
