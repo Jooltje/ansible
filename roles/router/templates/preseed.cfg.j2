@@ -28,3 +28,16 @@ d-i passwd/username string {{ pxe.user }}
 
 # Use encrypted password
 d-i passwd/user-password-crypted string {{ pxe.password }}
+
+# Partitioning
+# Use regular partitioning method (standard partitions)
+d-i partman-auto/method string regular
+
+# Use the atomic recipe (one partition for / plus a swap partition)
+d-i partman-auto/choose_recipe select atomic
+
+# Skip confirmation prompts
+d-i partman-partitioning/confirm_write_new_label boolean true
+d-i partman/choose_partition select finish
+d-i partman/confirm boolean true
+d-i partman/confirm_nooverwrite boolean true
