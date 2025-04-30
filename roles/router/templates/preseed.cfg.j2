@@ -19,6 +19,16 @@ d-i netcfg/get_domain string {{ pxe.domain }}
 # d-i preseed/late_command string \
 #     echo "blacklist iwlwifi" > /target/etc/modprobe.d/blacklist-wifi.conf
 
+# Generate Ed25519 SSH key pair for the ansible user
+- name: Generate Ed25519 SSH key pair if it doesn't exist
+  openssh_keypair:
+    path: "/home/{{ pxe.user }}/.ssh/id_ed25519"
+    type: ed25519
+    state: present
+    owner: "{{ pxe.user }}"
+    group: "{{ pxe.user }}"
+    mode: '0600'
+
 # Disable root account
 d-i passwd/root-login boolean false
 
@@ -60,7 +70,7 @@ d-i finish-install/reboot_in_progress note
 # Install SSH authorized keys for the ansible user and configure sudo access
 d-i preseed/late_command string \
     mkdir -p /target/home/{{ pxe.user }}/.ssh && \
-    echo "{{ ansible_ssh_public_key }}" > /target/home/{{ pxe.user }}/.ssh/authorized_keys && \
+    echo "{{ lookup('file', '/home/{{ pxe.user }}/.ssh/id_ed25519.pub') | trim }}" > /target/home/{{ pxe.user }}/.ssh/authorized_keys && \
     chmod 700 /target/home/{{ pxe.user }}/.ssh && \
     chmod 600 /target/home/{{ pxe.user }}/.ssh/authorized_keys && \
     chown -R {{ pxe.user }}:{{ pxe.user }} /target/home/{{ pxe.user }}/.ssh && \
