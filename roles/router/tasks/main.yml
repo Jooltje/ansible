@@ -168,7 +168,6 @@
     owner: dnsmasq
     group: dnsmasq
     mode: 0664
-  ignore_errors: true
 
 - name: Create empty DHCP hosts database
   file:
