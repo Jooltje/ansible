@@ -41,3 +41,18 @@ d-i partman-partitioning/confirm_write_new_label boolean true
 d-i partman/choose_partition select finish
 d-i partman/confirm boolean true
 d-i partman/confirm_nooverwrite boolean true
+
+# Mirror settings
+d-i mirror/country string BE
+d-i mirror/http/hostname string deb.debian.org
+d-i mirror/http/directory string /debian
+d-i mirror/http/proxy string
+
+# Package selection
+tasksel tasksel/first multiselect standard, ssh-server
+
+# Disable popularity-contest
+popularity-contest popularity-contest/participate boolean false
+
+# Skip the installation complete message
+d-i finish-install/reboot_in_progress note
