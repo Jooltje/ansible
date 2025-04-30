@@ -23,6 +23,14 @@ if ! grep -q "^$MAC " /etc/ethers 2>/dev/null; then
     # Add new entry
     echo "$MAC $HOSTNAME" >> /etc/ethers
     echo "$(date): Added new hostname $HOSTNAME for MAC $MAC ($3)"
+    
+    # Send SIGHUP to dnsmasq to reload /etc/ethers using PID file
+    if [ -f /run/dnsmasq/dnsmasq.pid ]; then
+        kill -HUP $(cat /run/dnsmasq/dnsmasq.pid)
+        echo "$(date): Sent SIGHUP to dnsmasq to reload ethers file"
+    else 
+        echo "$(date): Warning: dnsmasq PID file not found, couldn't reload ethers file"
+    fi
 else
     echo "$(date): Hostname for MAC $MAC already exists, no changes made"
 fi
