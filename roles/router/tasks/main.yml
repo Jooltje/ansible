@@ -166,7 +166,7 @@
     path: /etc/ethers
     state: touch
     owner: dnsmasq
-    group: dnsmasq
+    group: root
     mode: 0664
   
 - name: Deploy DHCP hostname script
