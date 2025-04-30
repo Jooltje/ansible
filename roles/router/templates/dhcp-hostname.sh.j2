@@ -16,21 +16,15 @@ HASH=$(echo "$MAC" | md5sum | cut -c1-8)
 # Generate hostname
 HOSTNAME="{{ pxe.hostname | default('debian') }}-${HASH}"
 
-# Create hosts database file if it doesn't exist
-HOSTS_DHCP="/etc/dhcp-hosts.db"
-touch "$HOSTS_DHCP"
+# Check if entry for this MAC already exists
+if ! grep -q "^$MAC " /etc/ethers 2>/dev/null; then
+    # Create ethers file if it doesn't exist
+    touch /etc/ethers 2>/dev/null
+    # Add new entry
+    echo "$MAC $HOSTNAME" >> /etc/ethers
+    echo "$(date): Added new hostname $HOSTNAME for MAC $MAC ($3)"
+else
+    echo "$(date): Hostname for MAC $MAC already exists, no changes made"
+fi
 
-# Remove any previous entries for this MAC address
-grep -v "^$MAC " "$HOSTS_DHCP" > "$HOSTS_DHCP.tmp"
-# Add current MAC to hostname mapping
-echo "$MAC $3 $HOSTNAME.{{ pxe.domain | default('local') }} $HOSTNAME" >> "$HOSTS_DHCP.tmp"
-mv "$HOSTS_DHCP.tmp" "$HOSTS_DHCP"
-
-# Generate hosts file entries from our database
-cat /etc/hosts.original > /etc/hosts
-while read MAC_ENTRY IP FQDN HOST; do
-    echo "$IP $FQDN $HOST" >> /etc/hosts
-done < "$HOSTS_DHCP"
-
-echo "$(date): Assigned $HOSTNAME to $MAC ($3)"
 exit 0

@@ -15,8 +15,8 @@ domain={{ pxe.domain | default('local') }}
 
 # Read hostnames from /etc/hosts for DHCP clients
 read-ethers
-# expand-hosts is not needed as the script adds complete FQDN entries
-# expand-hosts
+# Add domain to simple hostnames in /etc/hosts and /etc/ethers
+expand-hosts
 
 # Use script to generate hostnames based on MAC addresses
 dhcp-script=/usr/local/sbin/dhcp-hostname.sh
