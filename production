@@ -1,2 +1,2 @@
 [routers]
-nuc-01.network.lan
+nuc-01.network.lan ansible_connection=local
