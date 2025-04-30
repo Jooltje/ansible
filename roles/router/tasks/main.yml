@@ -161,13 +161,6 @@
     state: started
     
 # DHCP hostname generation setup
-- name: Backup original hosts file
-  copy:
-    src: /etc/hosts
-    dest: /etc/hosts.original
-    remote_src: yes
-    force: no  # Only copy if destination doesn't exist
-
 - name: Create empty ethers file with proper permissions
   file:
     path: /etc/ethers
