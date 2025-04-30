@@ -29,6 +29,16 @@
     state: started
     enabled: yes
 
+# Generate Ed25519 SSH key pair for the ansible user
+- name: Generate Ed25519 SSH key pair if it doesn't exist
+  openssh_keypair:
+    path: "/home/{{ pxe.user }}/.ssh/id_ed25519"
+    type: ed25519
+    state: present
+    owner: "{{ pxe.user }}"
+    group: "{{ pxe.user }}"
+    mode: '0600'
+
 # PXE Boot configuration tasks
 - name: Install UEFI PXE boot requirements
   apt:
@@ -123,16 +133,6 @@
     dest: "{{ pxe.tftp }}/debian/preseed/preseed.cfg"
     mode: 0644
   when: pxe.enabled | default(false) and pxe.debian.enabled | default(false)
-
-# Generate Ed25519 SSH key pair for the ansible user
-- name: Generate Ed25519 SSH key pair if it doesn't exist
-  openssh_keypair:
-    path: "/home/{{ pxe.user }}/.ssh/id_ed25519"
-    type: ed25519
-    state: present
-    owner: "{{ pxe.user }}"
-    group: "{{ pxe.user }}"
-    mode: '0600'
 
 # Configure IP forwarding and NAT using nftables
 - name: Configure IP forwarding with sysctl
