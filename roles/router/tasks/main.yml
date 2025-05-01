@@ -1,0 +1,194 @@
+---
+- name: Configure network interfaces
+  template:
+    src: interfaces.j2
+    dest: /etc/network/interfaces
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart networking
+
+- name: Install dnsmasq for DHCP
+  apt:
+    name: dnsmasq
+    state: present
+    update_cache: yes
+
+- name: Configure dnsmasq for DHCP
+  template:
+    src: dnsmasq.conf.j2
+    dest: /etc/dnsmasq.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart dnsmasq
+
+- name: Enable and start dnsmasq service
+  service:
+    name: dnsmasq
+    state: started
+    enabled: yes
+
+# Generate Ed25519 SSH key pair for the ansible user
+- name: Generate Ed25519 SSH key pair if it doesn't exist
+  openssh_keypair:
+    path: "/home/{{ pxe.user }}/.ssh/id_ed25519"
+    type: ed25519
+    state: present
+    owner: "{{ pxe.user }}"
+    group: "{{ pxe.user }}"
+    mode: '0600'
+
+# PXE Boot configuration tasks
+- name: Install UEFI PXE boot requirements
+  apt:
+    name:
+      - grub-efi-amd64-signed
+      - grub-common
+      - shim-signed
+    state: present
+  when: pxe.enabled | default(false)
+
+- name: Create TFTP root directory
+  file:
+    path: "{{ pxe.tftp }}"
+    state: directory
+    mode: 0755
+  when: pxe.enabled | default(false)
+
+- name: Create UEFI directory structure
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  with_items:
+    - "{{ pxe.tftp }}/EFI/BOOT"
+    - "{{ pxe.tftp }}/grub"
+    - "{{ pxe.tftp }}/debian"
+  when: pxe.enabled | default(false)
+
+- name: Copy UEFI boot files
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    remote_src: yes
+  with_items:
+    - { src: "/usr/lib/shim/shimx64.efi.signed", dest: "{{ pxe.tftp }}/EFI/BOOT/BOOTX64.EFI" }
+    - { src: "/usr/lib/grub/x86_64-efi-signed/grubnetx64.efi.signed", dest: "{{ pxe.tftp }}/EFI/BOOT/grubx64.efi" }
+  when: pxe.enabled | default(false)
+
+- name: Copy GRUB EFI bootloader to TFTP root
+  copy:
+    src: "/usr/lib/grub/x86_64-efi-signed/grubnetx64.efi.signed"
+    dest: "{{ pxe.tftp }}/grubx64.efi"
+    remote_src: yes
+  when: pxe.enabled | default(false)
+
+- name: Create GRUB configuration
+  template:
+    src: grub.cfg.j2
+    dest: "{{ pxe.tftp }}/grub/grub.cfg"
+    mode: 0644
+  when: pxe.enabled | default(false)
+
+- name: Create GRUB modules directory
+  file:
+    path: "{{ pxe.tftp }}/grub/x86_64-efi"
+    state: directory
+    mode: 0755
+  when: pxe.enabled | default(false)
+
+- name: Copy GRUB module listings
+  copy:
+    src: "/usr/lib/grub/x86_64-efi/{{ item }}"
+    dest: "{{ pxe.tftp }}/grub/x86_64-efi/{{ item }}"
+    remote_src: yes
+  with_items:
+    - command.lst
+    - fs.lst
+    - crypto.lst
+    - terminal.lst
+  when: pxe.enabled | default(false)
+
+- name: Download Debian installer files
+  get_url:
+    url: "{{ item.url }}"
+    dest: "{{ item.dest }}"
+    mode: 0644
+  with_items:
+    - { url: "{{ pxe.debian.kernel_url }}", dest: "{{ pxe.tftp }}/debian/vmlinuz" }
+    - { url: "{{ pxe.debian.initrd_url }}", dest: "{{ pxe.tftp }}/debian/initrd.gz" }
+  when: pxe.enabled | default(false) and pxe.debian.enabled | default(false)
+
+- name: Create preseed directory
+  file:
+    path: "{{ pxe.tftp }}/debian/preseed"
+    state: directory
+    mode: 0755
+  when: pxe.enabled | default(false) and pxe.debian.enabled | default(false)
+
+- name: Copy preseed file for automated installation
+  template:
+    src: preseed.cfg.j2
+    dest: "{{ pxe.tftp }}/debian/preseed/preseed.cfg"
+    mode: 0644
+  when: pxe.enabled | default(false) and pxe.debian.enabled | default(false)
+
+# Configure IP forwarding and NAT using nftables
+- name: Configure IP forwarding with sysctl
+  template:
+    src: sysctl.conf.j2
+    dest: /etc/sysctl.d/50-router.conf
+    mode: 0644
+  notify: restart procps
+
+- name: Install nftables
+  apt:
+    name: nftables
+    state: present
+
+- name: Create nftables configuration file
+  template:
+    src: nftables.conf.j2
+    dest: /etc/nftables.conf
+    mode: 0640
+  notify: restart nftables
+
+- name: Enable and start nftables service
+  systemd:
+    name: nftables
+    enabled: yes
+    state: started
+    
+# DHCP hostname generation setup
+- name: Create empty ethers file with proper permissions
+  file:
+    path: /etc/ethers
+    state: touch
+    owner: dnsmasq
+    group: root
+    mode: 0664
+  
+- name: Deploy DHCP hostname script
+  template:
+    src: dhcp-hostname.sh.j2
+    dest: /usr/local/sbin/dhcp-hostname.sh
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Create log file for hostname script
+  file:
+    path: /var/log/dhcp-hostname.log
+    state: touch
+    owner: root
+    group: root
+    mode: 0644
+    
+- name: Configure resolv.conf to use local DNS first
+  template:
+    src: resolv.conf.j2
+    dest: /etc/resolv.conf
+    owner: root
+    group: root
+    mode: 0644

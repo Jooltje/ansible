@@ -1,0 +1,72 @@
+# Global settings
+log-queries
+log-dhcp
+# Enable more verbose logging including TFTP
+log-debug
+
+# Bind only to specified interfaces, not all
+bind-interfaces
+
+# Don't use /etc/resolv.conf
+no-resolv
+
+# Specify upstream DNS servers (since no-resolv is enabled)
+{% for dns in dhcp.dns_servers %}
+server={{ dns }}
+{% endfor %}
+
+# Domain configuration for all DHCP clients
+domain={{ pxe.domain | default('local') }}
+
+# DNS configuration for local hostname resolution
+# Don't forward queries for plain names (without dots)
+domain-needed
+# Don't forward reverse lookups for private IP ranges
+bogus-priv
+# Set local domain for DHCP clients
+local=/{{ pxe.domain | default('local') }}/
+# Listen on localhost and LAN interfaces for DNS resolution
+listen-address=127.0.0.1
+listen-address={{ lan1.address }}
+listen-address={{ lan2.address }}
+
+# Read hostnames from /etc/hosts for DHCP clients
+read-ethers
+# Add domain to simple hostnames in /etc/hosts and /etc/ethers
+expand-hosts
+
+# Use script to generate hostnames based on MAC addresses
+dhcp-script=/usr/local/sbin/dhcp-hostname.sh
+
+# Listen ONLY on these interfaces (this restricts both DNS and DHCP)
+interface={{ interface }}.{{ lan1.vlan }}
+interface={{ interface }}.{{ lan2.vlan }}
+# Also listen on loopback for local DNS resolution
+interface=lo
+
+{% if pxe.enabled | default(false) %}
+# Enable TFTP server
+enable-tftp
+tftp-root={{ pxe.tftp }}
+
+# UEFI PXE Boot configuration
+# Match UEFI clients by architecture option
+dhcp-match=set:efi64,option:client-arch,7
+dhcp-match=set:efi64,option:client-arch,9
+# Set boot filename for UEFI clients
+dhcp-boot=tag:efi64,EFI/BOOT/BOOTX64.EFI
+{% endif %}
+
+{% if lan1.dhcp_enabled | default(false) %}
+# DHCP configuration for LAN1
+dhcp-range={{ interface }}.{{ lan1.vlan }},{{ lan1.dhcp_start }},{{ lan1.dhcp_end }},{{ lan1.netmask }},{{ dhcp.lease_time }}
+dhcp-option={{ interface }}.{{ lan1.vlan }},option:router,{{ lan1.address }}
+dhcp-option={{ interface }}.{{ lan1.vlan }},option:dns-server,{{ lan1.address }}
+{% endif %}
+
+{% if lan2.dhcp_enabled | default(false) %}
+# DHCP configuration for LAN2
+dhcp-range={{ interface }}.{{ lan2.vlan }},{{ lan2.dhcp_start }},{{ lan2.dhcp_end }},{{ lan2.netmask }},{{ dhcp.lease_time }}
+dhcp-option={{ interface }}.{{ lan2.vlan }},option:router,{{ lan2.address }}
+dhcp-option={{ interface }}.{{ lan2.vlan }},option:dns-server,{{ lan2.address }}
+{% endif %}

@@ -1,0 +1,57 @@
+#!/usr/sbin/nft -f
+
+flush ruleset
+
+table ip nat {
+    chain prerouting {
+        type nat hook prerouting priority -100; policy accept;
+    }
+
+    chain postrouting {
+        type nat hook postrouting priority 100; policy accept;
+        oifname "{{ interface }}.{{ wan.vlan }}" masquerade
+    }
+}
+
+table inet filter {
+    chain input {
+        type filter hook input priority 0; policy drop;
+        
+        # Allow established/related connections
+        ct state established,related accept
+        
+        # Allow loopback
+        iifname lo accept
+        
+        # Allow ICMP
+        ip protocol icmp accept
+        ip6 nexthdr icmpv6 accept
+        
+        # Allow SSH
+        tcp dport 22 accept
+    
+        # Allow DHCP requests ONLY from LAN interfaces
+        iifname { "{{ interface }}.{{ lan1.vlan }}", "{{ interface }}.{{ lan2.vlan }}" } udp dport 67 accept
+
+        # Allow TFTP requests ONLY from LAN interfaces
+        iifname { "{{ interface }}.{{ lan1.vlan }}", "{{ interface }}.{{ lan2.vlan }}" } udp dport 69 accept
+    
+        # Allow DNS requests ONLY from LAN interfaces
+        iifname { "{{ interface }}.{{ lan1.vlan }}", "{{ interface }}.{{ lan2.vlan }}" } udp dport 53 accept
+        iifname { "{{ interface }}.{{ lan1.vlan }}", "{{ interface }}.{{ lan2.vlan }}" } tcp dport 53 accept
+    }
+
+    chain forward {
+        type filter hook forward priority 0; policy drop;
+        
+        # Allow established/related connections
+        ct state established,related accept
+        
+        # Allow traffic from internal networks to WAN
+        iifname { "{{ interface }}.{{ lan1.vlan }}", "{{ interface }}.{{ lan2.vlan }}" } oifname "{{ interface }}.{{ wan.vlan }}" accept
+    }
+
+    chain output {
+        type filter hook output priority 0; policy accept;
+    }
+}

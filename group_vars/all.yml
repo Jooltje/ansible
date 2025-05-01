@@ -1,0 +1,53 @@
+---
+# Network configuration variables
+
+# Main interface
+interface: "enp3s0"
+
+# WAN 
+wan:
+  vlan: 10
+  address: "192.168.0.16"
+  netmask: "255.255.255.0"
+  gateway: "192.168.0.1"
+
+# DHCP common settings
+dhcp:
+  lease_time: "12h"
+  dns_servers:
+    - "8.8.8.8"
+    - "8.8.4.4"
+
+# LAN1
+lan1:
+  vlan: 20
+  address: "192.168.20.1"
+  netmask: "255.255.255.0"
+  dhcp_enabled: true
+  dhcp_start: "192.168.20.100"
+  dhcp_end: "192.168.20.200"
+
+# LAN2
+lan2:
+  vlan: 30
+  address: "192.168.30.1"
+  netmask: "255.255.255.0"
+  dhcp_enabled: true
+  dhcp_start: "192.168.30.100"
+  dhcp_end: "192.168.30.200"
+
+# PXE boot configuration
+pxe:
+  enabled: true
+  tftp: "/srv/tftp"
+  domain: "network.lan"
+  hostname: "zotax"
+  user: "ansible"
+  password: "$6$7zH3OQ0eEXgIbZf4$OrwK6MsaC5phsrb7cpwrpIWerbpeAfBu31dWkbDUAIzfcm2VjOxeYw057okEsDGgvp4YRGDsDim5nHPzV2MOW."
+  debian:
+    enabled: true
+    version: "bookworm"
+    arch: "amd64"
+    kernel_url: "http://ftp.debian.org/debian/dists/bookworm/main/installer-amd64/current/images/netboot/debian-installer/amd64/linux"
+    initrd_url: "http://ftp.debian.org/debian/dists/bookworm/main/installer-amd64/current/images/netboot/debian-installer/amd64/initrd.gz"
+

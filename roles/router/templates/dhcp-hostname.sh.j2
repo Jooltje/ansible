@@ -1,0 +1,44 @@
+#!/bin/bash
+# Generate hostname based on MAC address using hash function
+# Called by dnsmasq with: $1=add|old $2=MAC $3=IP $4=HOSTNAME
+
+# Enable logging
+exec 1>> /var/log/dhcp-hostname.log 2>&1
+echo "$(date): Called with args: $@"
+
+# Only process DHCP events (add/old), ignore TFTP events
+if [[ "$1" != "add" && "$1" != "old" ]]; then
+    echo "$(date): Ignoring non-DHCP event: $1"
+    exit 0
+fi
+
+# Exit if missing required parameters
+[ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ] && { echo "Missing parameters!"; exit 1; }
+
+# Generate hash from MAC address (lowercase for consistency)
+MAC=$(echo "$2" | tr '[:upper:]' '[:lower:]')
+# Create MD5 hash and take first 8 characters
+HASH=$(echo "$MAC" | md5sum | cut -c1-8)
+# Generate hostname
+HOSTNAME="{{ pxe.hostname | default('debian') }}-${HASH}"
+
+# Check if entry for this MAC already exists
+if ! grep -q "^$MAC " /etc/ethers 2>/dev/null; then
+    # Create ethers file if it doesn't exist
+    touch /etc/ethers 2>/dev/null
+    # Add new entry
+    echo "$MAC $HOSTNAME" >> /etc/ethers
+    echo "$(date): Added new hostname $HOSTNAME for MAC $MAC ($3)"
+    
+    # Send SIGHUP to dnsmasq to reload /etc/ethers using PID file
+    if [ -f /run/dnsmasq/dnsmasq.pid ]; then
+        kill -HUP $(cat /run/dnsmasq/dnsmasq.pid)
+        echo "$(date): Sent SIGHUP to dnsmasq to reload ethers file"
+    else 
+        echo "$(date): Warning: dnsmasq PID file not found, couldn't reload ethers file"
+    fi
+else
+    echo "$(date): Hostname for MAC $MAC already exists, no changes made"
+fi
+
+exit 0

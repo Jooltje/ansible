@@ -1,0 +1,72 @@
+# Debian Preseed Configuration
+# Localization settings
+d-i debian-installer/language string en
+d-i debian-installer/country string BE
+d-i debian-installer/locale string en_US.UTF-8
+d-i keyboard-configuration/xkb-keymap select be
+
+# Network configuration - hardcode enp1s0 as the default interface
+# Keep original option as reference
+#d-i netcfg/choose_interface select auto
+d-i netcfg/choose_interface select enp1s0
+
+# Set hostname and domain from all.yml values
+d-i netcfg/get_hostname string {{ pxe.hostname }}
+d-i netcfg/get_domain string {{ pxe.domain }}
+
+# TODO: Consider permanently blacklisting problematic WiFi modules on the installed system
+# Uncomment and adjust as needed:
+# d-i preseed/late_command string \
+#     echo "blacklist iwlwifi" > /target/etc/modprobe.d/blacklist-wifi.conf
+
+# Disable root account
+d-i passwd/root-login boolean false
+
+# Create a regular user with sudo access
+d-i passwd/user-fullname string {{ pxe.user }}
+d-i passwd/username string {{ pxe.user }}
+
+# Use encrypted password
+d-i passwd/user-password-crypted string {{ pxe.password }}
+
+# Partitioning
+# Use regular partitioning method (standard partitions)
+d-i partman-auto/method string regular
+
+# Use the atomic recipe (one partition for / plus a swap partition)
+d-i partman-auto/choose_recipe select atomic
+
+# Skip confirmation prompts
+d-i partman-lvm/device_remove_lvm boolean true
+d-i partman-partitioning/confirm_write_new_label boolean true
+d-i partman/choose_partition select finish
+d-i partman/confirm boolean true
+d-i partman/confirm_nooverwrite boolean true
+
+# Mirror settings
+d-i mirror/country string BE
+d-i mirror/http/hostname string deb.debian.org
+d-i mirror/http/directory string /debian
+d-i mirror/http/proxy string
+
+# Package selection
+tasksel tasksel/first multiselect standard, ssh-server
+
+# Disable popularity-contest
+popularity-contest popularity-contest/participate boolean false
+
+# Skip the installation complete message
+d-i finish-install/reboot_in_progress note
+
+# Install SSH authorized keys for the ansible user and configure sudo access
+d-i preseed/late_command string \
+    in-target mkdir -p /home/{{ pxe.user }}/.ssh && \
+    in-target bash -c "echo '{{ lookup('file', '/home/{{ pxe.user }}/.ssh/id_ed25519.pub') | trim }}' > /home/{{ pxe.user }}/.ssh/authorized_keys" && \
+    in-target chmod 700 /home/{{ pxe.user }}/.ssh && \
+    in-target chmod 600 /home/{{ pxe.user }}/.ssh/authorized_keys && \
+    in-target chown -R {{ pxe.user }}:{{ pxe.user }} /home/{{ pxe.user }}/.ssh && \
+    in-target bash -c "echo '{{ pxe.user }} ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/ansible" && \
+    in-target chmod 440 /etc/sudoers.d/ansible && \
+    in-target sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config && \
+    in-target sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/' /etc/ssh/sshd_config && \
+    in-target sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config

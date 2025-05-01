@@ -1,0 +1,20 @@
+---
+- name: restart networking
+  service:
+    name: networking
+    state: restarted
+
+- name: restart dnsmasq
+  service:
+    name: dnsmasq
+    state: restarted
+
+- name: restart nftables
+  systemd:
+    name: nftables
+    state: restarted
+
+- name: restart procps
+  systemd:
+    name: procps
+    state: restarted
