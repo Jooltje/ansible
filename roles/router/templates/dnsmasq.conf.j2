@@ -61,12 +61,12 @@ dhcp-boot=tag:efi64,EFI/BOOT/BOOTX64.EFI
 # DHCP configuration for LAN1
 dhcp-range={{ interface }}.{{ lan1.vlan }},{{ lan1.dhcp_start }},{{ lan1.dhcp_end }},{{ lan1.netmask }},{{ dhcp.lease_time }}
 dhcp-option={{ interface }}.{{ lan1.vlan }},option:router,{{ lan1.address }}
-dhcp-option={{ interface }}.{{ lan1.vlan }},option:dns-server,{{ dhcp.dns_servers | join(',') }}
+dhcp-option={{ interface }}.{{ lan1.vlan }},option:dns-server,{{ lan1.address }}
 {% endif %}
 
 {% if lan2.dhcp_enabled | default(false) %}
 # DHCP configuration for LAN2
 dhcp-range={{ interface }}.{{ lan2.vlan }},{{ lan2.dhcp_start }},{{ lan2.dhcp_end }},{{ lan2.netmask }},{{ dhcp.lease_time }}
 dhcp-option={{ interface }}.{{ lan2.vlan }},option:router,{{ lan2.address }}
-dhcp-option={{ interface }}.{{ lan2.vlan }},option:dns-server,{{ dhcp.dns_servers | join(',') }}
+dhcp-option={{ interface }}.{{ lan2.vlan }},option:dns-server,{{ lan2.address }}
 {% endif %}
