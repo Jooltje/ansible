@@ -1,2 +1,7 @@
 [routers]
 nuc-01.network.lan ansible_connection=local
+
+[nodes]
+zotax-3b5d1ec1.network.lan
+zotax-4847ff6a.network.lan
+zotax-357fcd45.network.lan

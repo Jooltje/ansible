@@ -1,0 +1,16 @@
+---
+- name: Configure network interfaces
+  ansible.builtin.template:
+    src: interfaces.j2
+    dest: /etc/network/interfaces
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart network service
+
+- name: Enable network service
+  ansible.builtin.service:
+    name: networking
+    state: started
+    enabled: yes
+

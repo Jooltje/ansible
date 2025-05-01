@@ -1,0 +1,6 @@
+---
+- name: Configure nodes
+  hosts: nodes
+  become: yes
+  roles:
+    - network
