@@ -184,3 +184,11 @@
     owner: root
     group: root
     mode: 0644
+    
+- name: Configure resolv.conf to use local DNS first
+  template:
+    src: resolv.conf.j2
+    dest: /etc/resolv.conf
+    owner: root
+    group: root
+    mode: 0644

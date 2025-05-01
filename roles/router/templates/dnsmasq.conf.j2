@@ -10,8 +10,25 @@ bind-interfaces
 # Don't use /etc/resolv.conf
 no-resolv
 
+# Specify upstream DNS servers (since no-resolv is enabled)
+{% for dns in dhcp.dns_servers %}
+server={{ dns }}
+{% endfor %}
+
 # Domain configuration for all DHCP clients
 domain={{ pxe.domain | default('local') }}
+
+# DNS configuration for local hostname resolution
+# Don't forward queries for plain names (without dots)
+domain-needed
+# Don't forward reverse lookups for private IP ranges
+bogus-priv
+# Set local domain for DHCP clients
+local=/{{ pxe.domain | default('local') }}/
+# Listen on localhost and LAN interfaces for DNS resolution
+listen-address=127.0.0.1
+listen-address={{ lan1.address }}
+listen-address={{ lan2.address }}
 
 # Read hostnames from /etc/hosts for DHCP clients
 read-ethers
